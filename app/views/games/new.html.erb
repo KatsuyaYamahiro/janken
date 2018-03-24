@@ -1,0 +1,19 @@
+<h1>New Game</h1>
+
+<h3>フォームによる入力</h3>
+<h3>gu or tyo or paでお願いします</h3>
+<%= render 'form', game: @game %>
+
+<h3>リンクによる入力</h3>
+
+<%= link_to 'グー',  games_path(:game => {:my_hand => "gu"}), method: :post %>
+<%= link_to 'チョキ',  games_path(:game => {:my_hand => "tyo"}), method: :post %>
+<%= link_to 'パー',  games_path(:game => {:my_hand => "pa"}), method: :post %>
+
+<h3>ボタンによる入力</h3>
+
+<%= button_to 'グー',  games_path(:game => {:my_hand => "gu"}), method: :post %>
+<%= button_to 'チョキ',  games_path(:game => {:my_hand => "tyo"}), method: :post %>
+<%= button_to 'パー',  games_path(:game => {:my_hand => "pa"}), method: :post %>
+
+<%= link_to 'Back', games_path %>
