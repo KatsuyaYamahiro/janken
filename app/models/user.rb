@@ -9,25 +9,21 @@ class User < ApplicationRecord
   :confirmable, :lockable, :timeoutable, :omniauthable, omniauth_providers: [:twitter]
 
   
-    def self.from_omniauth(auth)
-      where(provider: auth["provider"], uid: auth["uid"]).first_or_create do |user|
-          user.provider = auth["provider"]
-          user.uid = auth["uid"]
-          user.username = auth["info"]["nickname"]
-      end
-  end
-
-  def self.new_with_session(_, session)
-    super.tap do |user|
-      if (data = session['devise.omniauth_data'])
-        user.email = data['email'] if user.email.blank?
-        user.username = data['name'] if user.username.blank?
-        user.facebook_uid = data['facebook_uid'] if data['facebook_uid'] && user.facebook_uid.blank?
-        # twitterの判定も先取って記述しておきます
-        user.twitter_uid = data['twitter_uid'] if data['twitter_uid'] && user.twitter_uid.blank?
-        user.skip_confirmation!
-      end
+  def self.from_omniauth(auth)
+    find_or_create_by(provider: auth["provider"], uid: auth["uid"]) do |user|
+      user.provider = auth["provider"]
+      user.uid = auth["uid"]
+      user.username = auth["info"]["nickname"]
     end
   end
-  
+
+  def self.new_with_session(params, session)
+    if session["devise.user_attributes"]
+      new(session["devise.user_attributes"]) do |user|
+        user.attributes = params
+      end
+    else
+      super
+    end
+  end
 end
